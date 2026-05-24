@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>РГР: Анализ временных рядов - Полный отчет</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: white;
+            padding: 50px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+        
+        .header {
+            text-align: center;
+            border-bottom: 4px solid #0066cc;
+            padding-bottom: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 32px;
+            color: #0066cc;
+            margin-bottom: 10px;
+        }
+        
+        .header h2 {
+            font-size: 24px;
+            color: #555;
+            margin-bottom: 5px;
+        }
+        
+        .header p {
+            color: #888;
+            font-size: 14px;
+        }
+        
+        h1, h2, h3 {
+            color: #0066cc;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        
+        h2 {
+            border-left: 5px solid #0066cc;
+            padding-left: 15px;
+            font-size: 20px;
+        }
+        
+        h3 {
+            color: #333;
+            font-size: 16px;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+            page-break-inside: avoid;
+        }
+        
+        .stats-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .stats-box p {
+            margin: 8px 0;
+            font-size: 15px;
+        }
+        
+        .stats-box strong {
+            font-weight: 600;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        table td {
+            border-bottom: 1px solid #ddd;
+            padding: 12px;
+        }
+        
+        table tr:hover {
+            background: #f5f5f5;
+        }
+        
+        .figure {
+            text-align: center;
+            margin: 30px 0;
+            page-break-inside: avoid;
+        }
+        
+        .figure img {
+            max-width: 100%;
+            height: auto;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        
+        .figure img:hover {
+            transform: scale(1.01);
+        }
+        
+        .figure-caption {
+            color: #666;
+            font-style: italic;
+            margin-top: 10px;
+            font-size: 13px;
+        }
+        
+        .highlight {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        
+        .success {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        
+        .info {
+            background: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        
+        .list-group {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .list-group-item {
+            padding: 12px 15px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .list-group-item:last-child {
+            border-bottom: none;
+        }
+        
+        .list-group-item strong {
+            color: #0066cc;
+        }
+        
+        .conclusion {
+            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 2px solid #ddd;
+            text-align: center;
+            color: #888;
+            font-size: 12px;
+        }
+        
+        .page-break {
+            page-break-after: always;
+        }
+        
+        ul, ol {
+            margin: 15px 0;
+            margin-left: 30px;
+        }
+        
+        li {
+            margin: 8px 0;
+        }
+        
+        @media print {
+            body {
+                background: white;
+            }
+            .container {
+                box-shadow: none;
+                border-radius: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- ЗАГОЛОВОК -->
+        <div class="header">
+            <h1>🎓 РАСЧЕТНО-ГРАФИЧЕСКАЯ РАБОТА</h1>
+            <h2>Анализ временных рядов</h2>
+            <p>Дисциплина: Методы анализа временных рядов</p>
+            <p>Дата отчета: 23.05.2026</p>
+        </div>
+        
+        <!-- СОДЕРЖАНИЕ -->
+        <div class="section">
+            <h2>📋 Содержание отчета</h2>
+            <ol>
+                <li>Описание временного ряда</li>
+                <li>Анализ выбросов</li>
+                <li>Коррелограммы (АКФ и ЧАКФ)</li>
+                <li>Анализ стационарности и выбор моделей</li>
+                <li>Результаты моделирования</li>
+                <li>Метрики качества моделей</li>
+                <li>Анализ влияния параметров</li>
+                <li>Анализ зависимости от горизонта прогнозирования</li>
+                <li>Выводы и рекомендации</li>
+            </ol>
+        </div>
+        
+        <div class="page-break"></div>
+        
+        <!-- РАЗДЕЛ 1: ОПИСАНИЕ -->
+        <div class="section">
+            <h2>1️⃣ Описание временного ряда</h2>
+            
+            <div class="stats-box">
+                <p><strong>Количество наблюдений:</strong> 79</p>
+                <p><strong>Период наблюдений:</strong> октябрь 2019 - апрель 2026</p>
+                <p><strong>Минимальное значение:</strong> 13,484</p>
+                <p><strong>Максимальное значение:</strong> 296,838</p>
+                <p><strong>Среднее значение:</strong> 50,006</p>
+                <p><strong>Стандартное отклонение:</strong> 49,051</p>
+            </div>
+            
+            <h3>График временного ряда</h3>
+            <div class="figure">
+                <img src="figures/01_time_series.png" alt="График временного ряда">
+                <p class="figure-caption">Рис. 1 - Исходный временной ряд с разделением на обучающую и тестовую выборки</p>
+            </div>
+            
+            <div class="info">
+                <strong>ℹ️ Интерпретация:</strong> Временной ряд демонстрирует значительный рост с 2020 года, что совпадает с историческими событиями. Наблюдается нарастающий тренд и значительная волатильность. Данные четко разделены на обучающую выборку (80%) и тестовую выборку (20%) для валидации моделей.
+            </div>
+        </div>
+        
+        <!-- РАЗДЕЛ 2: ВЫБРОСЫ -->
+        <div class="section">
+            <h2>2️⃣ Анализ выбросов</h2>
+            
+            <p>Для выявления аномалий в данных использованы три статистических метода:</p>
+            
+            <div class="list-group">
+                <div class="list-group-item">
+                    <strong>Метод IQR (Inter-Quartile Range):</strong> 8 выбросов<br>
+                    <small>Основан на границах [Q1 - 1.5·IQR, Q3 + 1.5·IQR], где IQR = Q3 - Q1</small>
+                </div>
+                <div class="list-group-item">
+                    <strong>Метод MAD (Median Absolute Deviation):</strong> 20 выбросов<br>
+                    <small>Использует модифицированный z-score с порогом 2.5</small>
+                </div>
+                <div class="list-group-item">
+                    <strong>Метод Z-score:</strong> 3 выброса<br>
+                    <small>Выявляет значения, отклоняющиеся более чем на 3σ от среднего</small>
+                </div>
+            </div>
+            
+            <div class="figure">
+                <img src="figures/02_outliers.png" alt="Анализ выбросов">
+                <p class="figure-caption">Рис. 2 - Результаты анализа выбросов различными методами</p>
+            </div>
+            
+            <div class="highlight">
+                <strong>⚠️ Замечание:</strong> Методы выявили различное количество выбросов. Метод MAD выявил больше аномалий, что может указывать на наличие структурных изменений в ряде. При построении моделей следует учитывать возможное влияние этих выбросов на качество прогнозирования.
+            </div>
+        </div>
+        
+        <!-- РАЗДЕЛ 3: КОРРЕЛОГРАММЫ -->
+        <div class="section">
+            <h2>3️⃣ Коррелограммы (АКФ и ЧАКФ)</h2>
+            
+            <p>Автокорреляционная (АКФ) и частная автокорреляционная (ЧАКФ) функции показывают зависимость значений ряда от своих предыдущих значений:</p>
+            
+            <div class="figure">
+                <img src="figures/03_acf_pacf.png" alt="АКФ и ЧАКФ">
+                <p class="figure-caption">Рис. 3 - Автокорреляционная функция (АКФ) и частная автокорреляционная функция (ЧАКФ)</p>
+            </div>
+            
+            <div class="info">
+                <strong>ℹ️ Интерпретация коррелограмм:</strong>
+                <ul>
+                    <li><strong>АКФ исходного ряда:</strong> Медленное убывание указывает на наличие тренда и нестационарность</li>
+                    <li><strong>ЧАКФ исходного ряда:</strong> Значительное значение при лаге 1 указывает на авторегрессию первого порядка</li>
+                    <li><strong>АКФ и ЧАКФ первых разностей:</strong> Более быстрое убывание свидетельствует об улучшении стационарности после дифференцирования</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- РАЗДЕЛ 4: АНАЛИЗ СТАЦИОНАРНОСТИ -->
+        <div class="section">
+            <h2>4️⃣ Анализ стационарности и выбор моделей</h2>
+            
+            <h3>Тесты стационарности</h3>
+            
+            <table>
+                <tr>
+                    <th>Тест</th>
+                    <th>Статистика</th>
+                    <th>p-value</th>
+                    <th>Критическое значение (5%)</th>
+                    <th>Вывод</th>
+                </tr>
+                <tr>
+                    <td><strong>ADF (Дики-Фуллер)</strong></td>
+                    <td>-3.289</td>
+                    <td>0.015</td>
+                    <td>-2.901</td>
+                    <td>✓ Стационарен</td>
+                </tr>
+                <tr>
+                    <td><strong>KPSS</strong></td>
+                    <td>0.724</td>
+                    <td>0.011</td>
+                    <td>0.463</td>
+                    <td>✗ Нестационарен</td>
+                </tr>
+            </table>
+            
+            <h3>Обоснование выбора моделей</h3>
+            
+            <div class="success">
+                <strong>✓ Выбранные модели:</strong>
+                <ul>
+                    <li><strong>ARIMA(1,1,1)</strong> - базовая модель авторегрессии с интегрированием. Использует авторегрессию 1-го порядка, одну разность для достижения стационарности и скользящее среднее 1-го порядка.</li>
+                    <li><strong>Экспоненциальное сглаживание Холта-Винтерса</strong> - адаптивный метод, который учитывает локальный тренд. Пригоден для данных с трендом.</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="page-break"></div>
+        
+        <!-- РАЗДЕЛ 5: РЕЗУЛЬТАТЫ МОДЕЛИРОВАНИЯ -->
+        <div class="section">
+            <h2>5️⃣ Результаты моделирования</h2>
+            
+            <h3>Модель ARIMA(1,1,1)</h3>
+            <p><strong>Параметры:</strong></p>
+            <ul>
+                <li>p = 1 (авторегрессионная часть)</li>
+                <li>d = 1 (дифференцирование первого порядка)</li>
+                <li>q = 1 (скользящее среднее)</li>
+            </ul>
+            
+            <div class="figure">
+                <img src="figures/05_residuals_ARIMA.png" alt="Анализ остатков ARIMA">
+                <p class="figure-caption">Рис. 4 - Анализ остатков модели ARIMA: график остатков, распределение, АКФ, Q-Q диаграмма</p>
+            </div>
+            
+            <h3>Модель Экспоненциального сглаживания</h3>
+            <p><strong>Параметры:</strong> Сглаживание Холта с аддитивным трендом</p>
+            
+            <div class="figure">
+                <img src="figures/05_residuals_ExpSmoothing.png" alt="Анализ остатков ExSmoothing">
+                <p class="figure-caption">Рис. 5 - Анализ остатков модели экспоненциального сглаживания</p>
+            </div>
+        </div>
+        
+        <!-- РАЗДЕЛ 6: МЕТРИКИ -->
+        <div class="section">
+            <h2>6️⃣ Метрики качества моделей</h2>
+            
+            <h3>Определение метрик</h3>
+            <ul>
+                <li><strong>MAE (Mean Absolute Error)</strong> = среднее абсолютное отклонение прогноза от фактических значений</li>
+                <li><strong>RMSE (Root Mean Squared Error)</strong> = корень из среднеквадратичной ошибки</li>
+                <li><strong>MAPE (Mean Absolute Percentage Error)</strong> = средняя абсолютная процентная ошибка</li>
+            </ul>
+            
+            <h3>Результаты</h3>
+            <table>
+                <tr>
+                    <th>Модель</th>
+                    <th>MAE</th>
+                    <th>RMSE</th>
+                    <th>MAPE (%)</th>
+                </tr>
+                <tr>
+                    <td><strong>ARIMA(1,1,1)</strong></td>
+                    <td>6,034.52</td>
+                    <td>7,329.93</td>
+                    <td>0.27%</td>
+                </tr>
+                <tr>
+                    <td><strong>Exponential Smoothing</strong></td>
+                    <td>26,875.59</td>
+                    <td>29,959.01</td>
+                    <td>1.14%</td>
+                </tr>
+            </table>
+            
+            <div class="success">
+                <strong>🏆 ЛУЧШАЯ МОДЕЛЬ: ARIMA(1,1,1)</strong><br>
+                Модель ARIMA показала значительно меньшую ошибку (MAE в 4.5 раза меньше) и MAPE менее 0.5%, что свидетельствует об отличной точности прогнозирования.
+            </div>
+            
+            <h3>Сравнение прогнозов</h3>
+            <div class="figure">
+                <img src="figures/04_forecast_comparison.png" alt="Сравнение прогнозов">
+                <p class="figure-caption">Рис. 6 - Сравнение прогнозов моделей на тестовой выборке</p>
+            </div>
+        </div>
+        
+        <div class="page-break"></div>
+        
+        <!-- РАЗДЕЛ 7: ПАРАМЕТРИЧЕСКАЯ ЧУВСТВИТЕЛЬНОСТЬ -->
+        <div class="section">
+            <h2>7️⃣ Анализ влияния параметров на качество модели</h2>
+            
+            <p>Проведено систематическое исследование влияния параметров ARIMA на качество прогнозирования путем тестирования всех комбинаций p ∈ [0,2], d ∈ [0,2], q ∈ [0,2].</p>
+            
+            <h3>Результаты параметрического анализа</h3>
+            <table>
+                <tr>
+                    <th>Параметры (p,d,q)</th>
+                    <th>MAE</th>
+                    <th>AIC</th>
+                    <th>BIC</th>
+                </tr>
+                <tr>
+                    <td><strong>(0,1,2)</strong></td>
+                    <td>5,238.04</td>
+                    <td>1496.51</td>
+                    <td>1502.89</td>
+                </tr>
+                <tr>
+                    <td>(2,1,0)</td>
+                    <td>5,670.27</td>
+                    <td>1487.16</td>
+                    <td>1493.54</td>
+                </tr>
+                <tr>
+                    <td>(0,1,0)</td>
+                    <td>5,742.81</td>
+                    <td>1495.87</td>
+                    <td>1497.99</td>
+                </tr>
+            </table>
+            
+            <div class="figure">
+                <img src="figures/06_parameter_sensitivity.png" alt="Анализ чувствительности параметров">
+                <p class="figure-caption">Рис. 7 - Влияние параметров (p, d, q) на MAE, AIC и BIC</p>
+            </div>
+            
+            <div class="info">
+                <strong>📊 Выводы из анализа:</strong>
+                <ul>
+                    <li>Параметр d (дифференцирование) в значении 1 является оптимальным</li>
+                    <li>Комбинация (0,1,2) дает наименьшую MAE</li>
+                    <li>Критерии AIC и BIC предпочитают модели с p=2, но они дают незначительно худший результат по MAE</li>
+                    <li>Увеличение сложности модели (больше параметров) не всегда улучшает качество на тестовой выборке</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- РАЗДЕЛ 8: АНАЛИЗ ГОРИЗОНТОВ -->
+        <div class="section">
+            <h2>8️⃣ Анализ зависимости точности от горизонта прогнозирования</h2>
+            
+            <p>Исследована зависимость точности прогноза от количества шагов вперед (горизонт прогнозирования).</p>
+            
+            <table>
+                <tr>
+                    <th>Горизонт (шагов)</th>
+                    <th>MAE</th>
+                    <th>RMSE</th>
+                    <th>MAPE (%)</th>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>4,798.46</td>
+                    <td>4,798.46</td>
+                    <td>0.18%</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>4,580.31</td>
+                    <td>4,585.50</td>
+                    <td>0.17%</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>3,837.09</td>
+                    <td>3,982.43</td>
+                    <td>0.14%</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>3,621.70</td>
+                    <td>3,998.81</td>
+                    <td>0.12%</td>
+                </tr>
+                <tr>
+                    <td>7</td>
+                    <td>5,897.23</td>
+                    <td>7,082.92</td>
+                    <td>0.26%</td>
+                </tr>
+            </table>
+            
+            <div class="figure">
+                <img src="figures/07_horizon_analysis.png" alt="Анализ горизонтов прогнозирования">
+                <p class="figure-caption">Рис. 8 - Зависимость MAE, RMSE и MAPE от горизонта прогнозирования</p>
+            </div>
+            
+            <div class="highlight">
+                <strong>🔍 Наблюдения:</strong>
+                <ul>
+                    <li>Точность прогноза остается высокой для всех рассмотренных горизонтов (MAPE &lt; 0.3%)</li>
+                    <li>Минимальная MAE достигается при горизонте 3-5 шагов</li>
+                    <li>После 5 шагов наблюдается увеличение ошибки, что характерно для долгосрочных прогнозов</li>
+                    <li>Модель ARIMA надежна для среднесрочного прогнозирования (3-6 шагов)</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="page-break"></div>
+        
+        <!-- РАЗДЕЛ 9: ВЫВОДЫ -->
+        <div class="section">
+            <h2>9️⃣ Выводы и рекомендации</h2>
+            
+            <div class="conclusion">
+                <h3>Основные выводы:</h3>
+                <ol>
+                    <li><strong>Анализ выбросов:</strong> Выявлено 3-20 выбросов в зависимости от метода. Метод MAD показал наибольшую чувствительность.</li>
+                    <li><strong>Стационарность:</strong> Результаты тестов противоречивы (ADF указывает на стационарность, KPSS - на нестационарность), что требует дифференцирования.</li>
+                    <li><strong>Качество моделей:</strong> ARIMA(1,1,1) обеспечивает точность MAPE = 0.27%, что является отличным результатом.</li>
+                    <li><strong>Параметрическая чувствительность:</strong> Оптимальные параметры ARIMA - (0,1,2) с MAE = 5238.04.</li>
+                    <li><strong>Горизонты прогнозирования:</strong> Модель надежна для прогнозирования на 3-5 месяцев вперед.</li>
+                </ol>
+            </div>
+            
+            <h3>Рекомендации:</h3>
+            <ul>
+                <li>✓ Использовать ARIMA(1,1,1) или (0,1,2) для месячного прогнозирования данного ряда</li>
+                <li>✓ Для долгосрочных прогнозов (&gt;6 месяцев) использовать ансамбли моделей</li>
+                <li>✓ Переобучать модель ежемесячно с новыми данными</li>
+                <li>✓ Учитывать выявленные выбросы при интерпретации результатов</li>
+                <li>✓ Дополнительно рассмотреть сезонные модели SARIMA при наличии сезонности</li>
+            </ul>
+            
+            <h3>Возможные улучшения:</h3>
+            <ul>
+                <li>□ Исследовать модели SARIMA с учетом возможной годовой сезонности</li>
+                <li>□ Применить методы машинного обучения (LSTM, Prophet) для сравнения</li>
+                <li>□ Провести спектральный анализ для выявления скрытых периодичностей</li>
+                <li>□ Анализировать внешние факторы, влияющие на временной ряд</li>
+            </ul>
+        </div>
+        
+        <!-- ФУТЕР -->
+        <footer>
+            <p>РГР выполнена: 23.05.2026</p>
+            <p>Инструменты: Python 3.9 | pandas | numpy | matplotlib | seaborn | statsmodels | scikit-learn</p>
+            <p>Все расчеты и графики автоматически сгенерированы с использованием статистических методов анализа временных рядов.</p>
+        </footer>
+    </div>
+</body>
+</html>
